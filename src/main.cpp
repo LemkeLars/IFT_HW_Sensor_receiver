@@ -18,6 +18,7 @@ bool nextData = false;
 bool nextSize = false;
 int i = 0;
 int data[] = {0,0,0,0};
+int displayData[] = {0,0,0,0};
 String SensorName[] = {"Temp", "TDS", "pH", "level"};
 String SensorUnit[] = {"C", "ppm", "", "cm"};
 int SensorIndex = 0;
@@ -30,11 +31,11 @@ void displayNext() {
   lcd.setCursor(0,0);
   lcd.print(SensorName[SensorIndex] + ": ");
   lcd.setCursor(8,0);
-  lcd.print(data[SensorIndex] + SensorUnit[SensorIndex]);
+  lcd.print(displayData[SensorIndex] + SensorUnit[SensorIndex]);
   lcd.setCursor(0,1);
   lcd.print(SensorName[SensorIndex2] + ": ");
   lcd.setCursor(8,1);
-  lcd.print(data[SensorIndex2] + SensorUnit[SensorIndex2]);
+  lcd.print(displayData[SensorIndex2] + SensorUnit[SensorIndex2]);
   SensorIndex++;
   SensorIndex2++;
   if(SensorIndex > SensorAnount) SensorIndex = 0; 
@@ -46,11 +47,11 @@ void saveData(int data[]) {
   File dataFile = SD.open("datalog.csv", FILE_WRITE);
   // if the file is available, write to it:
   if (dataFile) {
+    dataFile.println();
     for (int i = 0; i < SensorAnount; i++) {
       dataFile.print(data[i]);
       if(i < SensorAnount - 1) dataFile.print(",");
     }
-    dataFile.println();
     dataFile.close();
     // print to the serial port too:
     for (int i = 0; i < SensorAnount; i++) {
@@ -66,14 +67,18 @@ void saveData(int data[]) {
 }
 
 void receive() {
-  if(!bluetooth.available()) return;
+  /* if(!bluetooth.available()) return;
   bluetoothData = bluetooth.read();
   if(i >= SensorAnount) i = 0;
   data[i] = bluetoothData;
-  i++;
+  i++; */
   // when none of the data is 0, save the data
   if(data[0] != 0 && data[1] != 0 && data[2] != 0 && data[3] != 0) {
     saveData(data);
+    // copy data to displayData
+    for (int i = 0; i < SensorAnount; i++) {
+      displayData[i] = data[i];
+    }
     data[0] = 0;
     data[1] = 0;
     data[2] = 0;
@@ -103,16 +108,21 @@ void setup() {
   }
   Serial.println("card initialized.");
   lcd.print("card init");
-  // create log file named "datalog.csv" and write header (sensor names) to it
-  File dataFile = SD.open("datalog.csv", FILE_WRITE);
-  if (dataFile) {
+  // create log file named "datalog.csv" and write header (sensor names) to it if it doesn't exist:
+  File dataFile = SD.open("datalog.csv");
+  if (!dataFile) {
+    Serial.println("datalog.csv doesn't exist, creating it");
+    // create header row:
+    dataFile = SD.open("datalog.csv", FILE_WRITE);
     for (int i = 0; i < SensorAnount; i++) {
       dataFile.print(SensorName[i]);
-      dataFile.print(",");
+      // write comma if not last item
+      if(i < SensorAnount - 1) dataFile.print(",");
     }
-    dataFile.println();
-    dataFile.close();
+  } else {
+    Serial.println("datalog.csv exists");
   }
+  dataFile.close();
   // Attach interrupt to receive data from bluetooth
   attachInterrupt(digitalPinToInterrupt(2), receive, FALLING);         // Attach interrupt to receive data from bluetooth
 }
@@ -124,10 +134,14 @@ void loop() {
     displayNext();
   }
 
-  if(data[0] != 0 && data[1] != 0) {
+  if(data[0] != 0 && data[1] != 0 && data[2] != 0 && data[3] != 0) {
     Serial.println(data[0]);
     Serial.println(data[1]);
+    Serial.println(data[2]);
+    Serial.println(data[3]);
     data[0] = 0;
     data[1] = 0;
+    data[2] = 0;
+    data[3] = 0;
   }
 }
