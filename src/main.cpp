@@ -67,11 +67,11 @@ void saveData(int data[]) {
 }
 
 void receive() {
-  if(!bluetooth.available()) return;
+  /* if(!bluetooth.available()) return;
   bluetoothData = bluetooth.read();
   if(i >= SensorAnount) i = 0;
   data[i] = bluetoothData;
-  i++;
+  i++; */
   // when none of the data is 0, save the data
   if(data[0] != 0 && data[1] != 0 && data[2] != 0 && data[3] != 0) {
     saveData(data);
