@@ -63,7 +63,7 @@ void saveData(int data[]) {
   }
   // if the file isn't open, pop up an error:
   else {
-    Serial.println("error opening datalog.txt");
+    Serial.println("error opening datalog.csv");
   }
 }
 
@@ -138,9 +138,9 @@ void loop() {
     Serial.println(data[1]);
     Serial.println(data[2]);
     Serial.println(data[3]);
-    data[0] = 0;
-    data[1] = 0;
-    data[2] = 0;
-    data[3] = 0;
+    // reset data
+    for (int i = 0; i < SensorAnount; i++) {
+      data[i] = 0;
+    }
   }
 }
