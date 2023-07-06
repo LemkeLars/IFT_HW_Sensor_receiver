@@ -26,6 +26,7 @@ int SensorIndex2 = 1;
 const unsigned long interval = 5000; // 5 seconds
 unsigned long previousMillis = 0;
 
+
 void displayNext() {
   lcd.clear();
   lcd.setCursor(0,0);
@@ -66,23 +67,20 @@ void saveData(int data[]) {
   }
 }
 
-void receive() {
-  if(!bluetooth.available()) return;
-  bluetoothData = bluetooth.read();
-  if(i >= SensorAnount) i = 0;
-  data[i] = bluetoothData;
-  i++;
-  // when none of the data is 0, save the data
-  if(data[0] != 0 && data[1] != 0 && data[2] != 0 && data[3] != 0) {
+void receive() {  
+  while(bluetooth.available()) { 
+    bluetoothData = bluetooth.read();
+    if(i >= SensorAnount) i = 0;
+    data[i] = bluetoothData;
+    //Serial.println(bluetoothData);
+    i++;
+    // when none of the data is 0, save the data
+    if(data[0] != 0 && data[1] != 0) 
     saveData(data);
     // copy data to displayData
     for (int i = 0; i < SensorAnount; i++) {
       displayData[i] = data[i];
     }
-    data[0] = 0;
-    data[1] = 0;
-    data[2] = 0;
-    data[3] = 0;
   }
 }
 
@@ -124,10 +122,11 @@ void setup() {
   }
   dataFile.close();
   // Attach interrupt to receive data from bluetooth
-  attachInterrupt(digitalPinToInterrupt(2), receive, FALLING);         // Attach interrupt to receive data from bluetooth
+  //attachInterrupt(digitalPinToInterrupt(2), receive, FALLING);
 }
 
 void loop() {
+  receive();
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;  // Reset the previousMillis
