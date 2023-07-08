@@ -76,7 +76,7 @@ void receive() {
     //Serial.println(bluetoothData);
     i++;
     // when none of the data is 0, save the data
-    if(data[0] != 0 && data[1] != 0) 
+    if(data[0] != 0 && data[1] != 0 && data[2] != 0 && data[3] != 0)  
     saveData(data);
     // copy data to displayData
     for (int i = 0; i < SensorAnount; i++) {
