@@ -40,7 +40,7 @@ void displayNext() {
   SensorIndex++;
   SensorIndex2++;
   if(SensorIndex > SensorAnount) SensorIndex = 0; 
-  if(SensorIndex2 > SensorAnount) SensorIndex2 = 0; 
+  if(SensorIndex2-1 > SensorAnount) SensorIndex2 = 0; 
 }
 
 void saveData(int data[]) {
