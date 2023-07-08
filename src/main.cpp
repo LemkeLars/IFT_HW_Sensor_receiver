@@ -7,7 +7,7 @@
 #include <SPI.h>
 #include <SD.h>
 
-#define SensorAnount 2
+#define SensorAnount 4
 
 SoftwareSerial bluetooth(2, 3); // RX, TX
 LiquidCrystal_I2C lcd(0x27,16,2);  // set the LCD address to 0x27 for a 16 chars and 2 line display
@@ -39,9 +39,10 @@ void displayNext() {
   lcd.print(displayData[SensorIndex2] + SensorUnit[SensorIndex2]);
   SensorIndex++;
   SensorIndex2++;
-  if(SensorIndex > SensorAnount) SensorIndex = 0; 
-  if(SensorIndex2-1 > SensorAnount) SensorIndex2 = 0; 
+  if (SensorIndex >= SensorAnount) SensorIndex = 0; 
+  if (SensorIndex2 >= SensorAnount) SensorIndex2 = 0; 
 }
+
 
 void saveData(int data[]) {
   // open log.txt and add data to it:
