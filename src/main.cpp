@@ -49,16 +49,16 @@ void saveData(int data[]) {
   File dataFile = SD.open("datalog.csv", FILE_WRITE);
   // if the file is available, write to it:
   if (dataFile) {
-    dataFile.println();
+    dataFile.print("\n");
     for (int i = 0; i < SensorAnount; i++) {
       dataFile.print(data[i]);
-      if(i < SensorAnount - 1) dataFile.print(",");
+      if(i < SensorAnount - 1) dataFile.print(";");
     }
     dataFile.close();
     // print to the serial port too:
     for (int i = 0; i < SensorAnount; i++) {
       Serial.print(data[i]);
-      if(i < SensorAnount - 1) Serial.print(",");
+      if(i < SensorAnount - 1) Serial.print(";");
     }
     Serial.println();
   }
@@ -76,8 +76,7 @@ void receive() {
     //Serial.println(bluetoothData);
     i++;
     // when none of the data is 0, save the data
-    if(data[0] != 0 && data[1] != 0 && data[2] != 0 && data[3] != 0)  
-    saveData(data);
+    if(data[0] != 0 && data[1] != 0 && data[2] != 0)  saveData(data);                         //modify if more sensors are added/working
     // copy data to displayData
     for (int i = 0; i < SensorAnount; i++) {
       displayData[i] = data[i];
@@ -116,7 +115,7 @@ void setup() {
     for (int i = 0; i < SensorAnount; i++) {
       dataFile.print(SensorName[i]);
       // write comma if not last item
-      if(i < SensorAnount - 1) dataFile.print(",");
+      if(i < SensorAnount - 1) dataFile.print(";");
     }
   } else {
     Serial.println("datalog.csv exists");
